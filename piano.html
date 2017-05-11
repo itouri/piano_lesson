@@ -1,0 +1,88 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="sample.js"></script>
+     <script type="text/javascript" src="code.js"></script>
+    <script type="text/javascript" src="./abcjs_basic_midi_3.1.2-min.js" ></script>
+    <title>Web MIDI API</title>
+  </head>
+  <body onload="init()">
+    <label>入力デバイス</label>
+    <ul id="input">
+    </ul>
+
+    <label>出力デバイス</label>
+    <ul id="output">
+    </ul>
+
+    <div>
+	    <label>同時音符数</label>
+	    <select id="sel_note">
+		    <option value="0">単音</option>
+		    <option value="1">コード</option>
+		</select>
+	</div>
+
+    <div id="div_code">
+        <label>出現コード</label>
+            <input type="checkbox" class="code" value=1 checked="checked">M
+            <input type="checkbox" class="code" value=2>m
+            <input type="checkbox" class="code" value=3>7
+            <input type="checkbox" class="code" value=4>M7
+            <input type="checkbox" class="code" value=5>m7
+            <input type="checkbox" class="code" value=6>dim
+            <input type="checkbox" class="code" value=7>aug
+            <input type="checkbox" class="code" value=8>sus4
+    </div>
+
+	<div id="div_display_code">
+		<label>コード名</label>
+	    <select id="sel_display_code">
+		    <option value=1>オン</option>
+		    <option value=0>オフ</option>
+		</select>
+	</div>
+
+	<div>
+		<label>音域</label>
+	    <select id="sel_lange">
+		    <option value=0>すべて</option>
+		    <option value=1>ト音のみ</option>
+		    <option value=2>ト音のみ(高音域なし</option>
+		    <option value=3>ヘ音のみ</option>
+		</select>
+	</div>
+
+    <div>
+        <label>#</label>
+        <select id="sel_sharp">
+            <option value=1>#あり</option>
+            <option value=0>#なし</option>
+        </select>
+    </div>
+
+	<div>
+		<label>スケール(未実装)</label>
+	    <select id="sel_scale" disabled="disabled">
+		    <option value="1">C固定</option>
+		    <option value="2">ランダム</option>
+		</select>
+	</div>
+
+    <p id="data">00 00 00</p>
+    <p id="vector">--</p>
+    <p id="code">--</p>
+
+    <!-- <button id="tmp">tmp</button> -->
+    <button id="btn_start">START!</button>
+
+    <p id="time">TIME</p>
+    <p id="score">SCORE</p>
+
+    <div id="ques"></div>
+    <div id="ans"></div>
+    <div id="ques2"></div>
+    <div id="ans2"></div>
+  </body>
+</html>
