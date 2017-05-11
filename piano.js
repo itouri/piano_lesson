@@ -30,7 +30,7 @@ var ranges = [
 ];
 
 	var _sel_note=0, _sel_display_code=1, _sel_lange=0, _sel_scale=0, _sel_sharp=1;
-	var _sel_codes = [];
+	var _sel_codes = [0];
 
 // MIDI接続成功時
 function successCallback(m){
@@ -170,8 +170,7 @@ function check_ans() {
 			}
 		}
 	}
-	//if ( hit == _ques.length ) {
-	if ( true ) { //test!!!
+	if ( hit == _ques.length ) {
 		// ゲーム中ならスコアをプラス
 		if ( _game_state == GAME_STATE.PLAYING ) {
 			_score++;
@@ -204,14 +203,16 @@ function question() {
 
 	// コードON
 	if ( _sel_note == 1 ) {
-		var type = random(0, _sel_codes.length - 1);
+		var crand = random(0, _sel_codes.length - 1);
+		var index = _sel_codes[crand];
+		console.log(index);
 
 		//                        音階名               コード名
-		var code_name = "CODE: "+ vector[rand % 12] + codes[type][0];
+		var code_name = "CODE: "+ vector[rand % 12] + codes[index][0];
 
 		// コードをpush			
-		for (var i = 1; i < codes[type].length; i++) {
-			_ques.push(rand + codes[type][i]);
+		for (var i = 1; i < codes[index].length; i++) {
+			_ques.push(rand + codes[index][i]);
 		}
 
 		if ( _sel_display_code == 1 ) {
