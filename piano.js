@@ -1,25 +1,30 @@
-	navigator.requestMIDIAccess().then(successCallback,faildCallback);
+navigator.requestMIDIAccess().then(successCallback,faildCallback);
 
-	var GAME_STATE = {
-		 STAND_BY : 0,
-		 PLAYING : 	1,
-		 RESULT : 	2,
-	};
+var GAME_STATE = {
+		STAND_BY : 0,
+		PLAYING : 	1,
+		RESULT : 	2,
+};
 
-	var MAX_TIME = 30 + 1;
+var MAX_TIME = 60 + 1;
 
-	var midi = null;
-	var inputs = [];
-	var outputs = [];
+var midi = null;
+var inputs = [];
+var outputs = [];
 
-	var _hold = [];
-	var _ques = [];
+var _hold = [];
+var _ques = [];
 
-	var _score = 0;
-	var _time;
-	var _game_state = GAME_STATE.STAND_BY;
+var _score = 0;
+var _time;
+var _game_state = GAME_STATE.STAND_BY;
 
-	var vector = ["C","^C","D","^D","E","F","^F","G","^G","A","^A","B"];
+var vector = ["C","^C","D","^D","E","F","^F","G","^G","A","^A","B"];
+
+// 効果音
+var _se_finish	= new Audio("./se/finish.mp3");
+var _se_start	= new Audio("./se/start.mp3");
+var _se_accept	= new Audio("./se/accept.mp3");
 
 // 音域
 var ranges = [
@@ -27,10 +32,11 @@ var ranges = [
 	[60, 96], // ト音のみ
 	[60, 77], // ト音 高音域なし	
 	[36, 59], // ヘ音のみ
+	[60, 71], // 1オクターブのみ
 ];
 
-	var _sel_note=0, _sel_display_code=1, _sel_lange=0, _sel_scale=0, _sel_sharp=1;
-	var _sel_codes = [0];
+var _sel_note=0, _sel_display_code=1, _sel_lange=0, _sel_scale=0, _sel_sharp=1;
+var _sel_codes = [0];
 
 
 function render() {
@@ -103,6 +109,8 @@ function check_ans() {
 		// ゲーム中ならスコアをプラス
 		if ( _game_state == GAME_STATE.PLAYING ) {
 			_score++;
+			// 効果音再生
+			_se_accept.play();
 			$("#score").text("SCORE: " + _score);
 		}
 		question();
@@ -174,6 +182,7 @@ function game_start() {
 function game_over() {
 	_game_state = GAME_STATE.STAND_BY;
 	$("#time").text("FINISH!");
+	_se_finish.play();
 	console.log("tick");
 }
 
@@ -218,6 +227,13 @@ $(function($) {
 	  	//$(this)でjQueryオブジェクトが取得できる。val()で値をvalue値を取得。
 	  	return $(this).val();
 	  }).get();
+
+	  // 何もチェックされてないなら STARTボタンを disable にする
+	  if ( _sel_codes.length == 0 ) {
+		  $("#btn_start").prop("disabled", true);
+	  } else {
+		  $("#btn_start").prop("disabled", false);
+	  }
 	});
 
 	$("#sel_display_code").change( function(){

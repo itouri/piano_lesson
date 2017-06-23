@@ -6,84 +6,119 @@
     <script type="text/javascript" src="./piano.js"></script>
     <script type="text/javascript" src="./code.js"></script>
     <script type="text/javascript" src="./abcjs_basic_midi_3.1.2-min.js" ></script>
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+
+    <link href="main.css" rel="stylesheet">
+
     <title>Web MIDI API</title>
   </head>
   <body onload="init()">
-    <label>入力デバイス</label>
-    <ul id="input">
-    </ul>
+      <div class="container">
+          <div id="title" class="center">
+              <h1>Piano Lesson</h1>
+          </div>
+          <div class="row">
+              <div class="offset-md-2 col-md-8">
+                  <div class="row">
+                    <label class="col-md-4">入力デバイス</label>
+                    <ul id="input" class="col-md-8">
+                    </ul>
+                  </div>
 
-    <label>出力デバイス</label>
-    <ul id="output">
-    </ul>
+                <div class="row">
+                    <label class="col-md-4">出力デバイス</label>
+                    <ul id="output" class="col-md-8">
+                    </ul>
+                </div>
 
-    <div>
-	    <label>同時音符数</label>
-	    <select id="sel_note">
-		    <option value="0">単音</option>
-		    <option value="1">コード</option>
-		</select>
-	</div>
+                <div class="row">
+                    <label class="col-md-4">同時音符数</label>
+                    <select id="sel_note" class="col-md-8">
+                        <option value="0">単音</option>
+                        <option value="1">コード</option>
+                    </select>
+                </div>
 
-    <div id="div_code">
-        <label>出現コード</label>
-            <input type="checkbox" class="code" value=0 checked="checked">M
-            <input type="checkbox" class="code" value=1>m
-            <input type="checkbox" class="code" value=2>7
-            <input type="checkbox" class="code" value=3>M7
-            <input type="checkbox" class="code" value=4>m7
-            <input type="checkbox" class="code" value=5>dim
-            <input type="checkbox" class="code" value=6>aug
-            <input type="checkbox" class="code" value=7>sus4
-    </div>
+                <div id="div_code" class="row">
+                    <label class="col-md-4">出現コード</label>
+                    <div class="col-md-8">
+                        <input type="checkbox" class="code" value=0 checked="checked">M
+                        <input type="checkbox" class="code" value=1>m
+                        <input type="checkbox" class="code" value=2>7
+                        <input type="checkbox" class="code" value=3>M7
+                        <input type="checkbox" class="code" value=4>m7
+                        <input type="checkbox" class="code" value=5>dim
+                        <input type="checkbox" class="code" value=6>aug
+                        <input type="checkbox" class="code" value=7>sus4
+                    </div>
+                </div>
 
-	<div id="div_display_code">
-		<label>コード名</label>
-	    <select id="sel_display_code">
-		    <option value=1>オン</option>
-		    <option value=0>オフ</option>
-		</select>
-	</div>
+                <div id="div_display_code" class="row">
+                    <label class="col-md-4">コード名</label>
+                    <select id="sel_display_code" class="col-md-8">
+                        <option value=1>オン</option>
+                        <option value=0>オフ</option>
+                    </select>
+                </div>
 
-	<div>
-		<label>音域</label>
-	    <select id="sel_lange">
-		    <option value=0>すべて</option>
-		    <option value=1>ト音のみ</option>
-		    <option value=2>ト音のみ(高音域なし</option>
-		    <option value=3>ヘ音のみ</option>
-		</select>
-	</div>
+                <div class="row">
+                    <label class="col-md-4">音域</label>
+                    <select id="sel_lange" class="col-md-8">
+                        <option value=0>すべて</option>
+                        <option value=1>ト音のみ</option>
+                        <option value=2>ト音のみ(高音域なし)</option>
+                        <option value=3>ヘ音のみ</option>
+                        <option value=4>1オクターブのみ</option>
+                    </select>
+                </div>
 
-    <div>
-        <label>#</label>
-        <select id="sel_sharp">
-            <option value=1>#あり</option>
-            <option value=0>#なし</option>
-        </select>
-    </div>
+                <div class="row">
+                    <label class="col-md-4">#</label>
+                    <select id="sel_sharp" class="col-md-8">
+                        <option value=1>#あり</option>
+                        <option value=0>#なし</option>
+                    </select>
+                </div>
 
-	<div>
-		<label>スケール(未実装)</label>
-	    <select id="sel_scale" disabled="disabled">
-		    <option value="1">C固定</option>
-		    <option value="2">ランダム</option>
-		</select>
-	</div>
+                <div class="row">
+                    <label class="col-md-4">スケール(未実装)</label>
+                    <select id="sel_scale" class="col-md-8" disabled="disabled">
+                        <option value="1">C固定</option>
+                        <option value="2">ランダム</option>
+                    </select>
+                </div>
 
-    <p id="data">00 00 00</p>
-    <p id="vector">--</p>
-    <p id="code">--</p>
+                <!-- <button id="tmp">tmp</button> -->
+                <div class="row">
+                    <button id="btn_start" class="btn btn-primary offset-md-4 col-md-4">START!</button>
+                </div>
 
-    <!-- <button id="tmp">tmp</button> -->
-    <button id="btn_start">START!</button>
+                <div class="center ui">
+                    <!--<p id="data">00 00 00</p>
+                    <p id="vector">--</p>-->
+                    <p id="code">--</p>
+                </div>
 
-    <p id="time">TIME</p>
-    <p id="score">SCORE</p>
+                <p id="score" class="center ui">SCORE</p>
+                <p id="time" class="center ui">TIME</p>
 
-    <div id="ques"></div>
-    <div id="ans"></div>
-    <div id="ques2"></div>
-    <div id="ans2"></div>
+                <div class="svg row">
+                    <div id="ques" class="offset-md-1 col-md-4 offset-md-1"></div>
+                    <div id="ans" class="offset-md-1 col-md-4 offset-md-1"></div>
+
+                </div>
+                <div class="svg row">
+                    <div id="ques2" class="svg offset-md-1 col-md-4 offset-md-1"></div>
+                    <div id="ans2" class="svg offset-md-1 col-md-4 offset-md-1"></div>
+                </div>
+                
+              </div>
+          </div>
+      </div>
   </body>
 </html>

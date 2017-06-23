@@ -1,0 +1,16 @@
+.row {
+    margin: 10px 0;
+}
+
+.center {
+    margin: auto;
+    text-align: center;
+}
+
+.svg {
+    height: 150px;
+}
+
+.ui {
+    font-size: 24px
+}
