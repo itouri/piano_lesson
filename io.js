@@ -45,14 +45,21 @@ function onMIDIEvent(e){
     }
 
     // 第三要素が0なら離したってこと
-    if (e.data[2] == 0) {
+    // if (e.data[2] == 0) { // Yamaha
+    if (e.data[0] == 0x80) { // Roland
     	for (var j = _hold.length - 1; j >= 0; j--) {
     		if ( _hold[j] == e.data[1]) {
     			_hold.splice(j,1);
     		}
     	}
     }
-	console.log(_hold);
+
+    // ピアノの鍵盤でスタートできるようにする			
+    if (e.data[0] == 0x80 && e.data[1] == 0x15 && _game_state == GAME_STATE.STAND_BY) {
+    	_hold.push(e.data[1]);
+    	game_start();
+    }
+	// console.log("Hold="+_hold);
 	//console.log(str);
   }
   $("#data").text(str);
