@@ -69,7 +69,7 @@
                 <div class="row">
                     <label class="col-md-4">音域</label>
                     <select id="sel_lange" class="col-md-8">
-                        <option value=0>すべて</option>
+                        <!-- <option value=0>すべて</option> -->
                         <option value=1>ト音のみ</option>
                         <option value=2>ヘ音のみ</option>
                     </select>
@@ -77,9 +77,9 @@
 
                 <div class="row">
                     <label class="col-md-4">#</label>
-                    <select id="sel_sharp" class="col-md-8">
-                        <option value=1>#あり</option>
+                    <select id="sel_sharp" class="col-md-8" disabled="disabled">
                         <option value=0>#なし</option>
+                        <option value=1>#あり</option>
                     </select>
                 </div>
 
@@ -105,14 +105,14 @@
                 <p id="score" class="center ui">SCORE</p>
                 <p id="time" class="center ui">TIME</p>
 
-                <div class="svg row">
-                    <div id="ques" class="offset-md-1 col-md-4 offset-md-1"></div>
-                    <div id="ans" class="offset-md-1 col-md-4 offset-md-1"></div>
+                <div id="to-row">
+                    <div id="ques" class="offset-md-2 col-md-12 offset-md-2" style=height:150px></div>
+                    <!-- <div id="ans" class="offset-md-1 col-md-4 offset-md-1"></div> -->
 
                 </div>
-                <div class="svg row">
-                    <div id="ques2" class="svg offset-md-1 col-md-4 offset-md-1"></div>
-                    <div id="ans2" class="svg offset-md-1 col-md-4 offset-md-1"></div>
+                <div id="he-row">
+                    <div id="ques2" class="svg offset-md-2 col-md-12 offset-md-2"></div>
+                    <!-- <div id="ans2" class="svg offset-md-1 col-md-4 offset-md-1"></div> -->
                 </div>
                 
               </div>
