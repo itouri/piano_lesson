@@ -29,8 +29,8 @@ var _se_accept	= new Audio("./se/accept.mp3");
 // 音域
 var ranges = [
 	//TODO 具体的な数字を使わない
-	[0x24, 0x60], // すべて
-	[0x35, 0x60], // ト音のみ
+	[0x24, 0x5b], // すべて
+	[0x35, 0x5b], // ト音のみ
 	[0x24, 0x40], // ヘ音のみ
 ];
 
@@ -72,9 +72,12 @@ function render() {
 				octave_str = Array(3 - octave + 1).join(',');
 			}
 
-			if ( nodes[j] >= 60 ) {
+			// ト音に音符を表示
+			if ( nodes[j] >= 0x35 ) {
 				str = str + vector[ nodes[j] % 12 ] + octave_str;
-			} else {
+			}
+			// ヘ音に音符を表示
+			if ( nodes[j] <= 0x43 ) {
 				str2 = str2 + vector[ nodes[j] % 12 ] + octave_str;
 			}
 		}
@@ -85,6 +88,7 @@ function render() {
 		str = head + attrs[i*2][0] + str;
 		str2 = head + attrs[i*2+1][0] + str2;
 
+		//TODO いらない記号を表示しない
 		ABCJS.renderAbc(attrs[i*2][1]  , str );
 		ABCJS.renderAbc(attrs[i*2+1][1], str2);
 	}
