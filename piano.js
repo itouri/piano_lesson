@@ -17,8 +17,11 @@ var outputs = [];
 
 var _hold = [];
 var _ques = []; // 二次元配列
+var _take_times = []; //各音符にかかった時間:連想配列
+var _previous_time;
 
 var _score = 0;
+var _init_score = 0;
 var _time;
 var _game_state = GAME_STATE.STAND_BY;
 
@@ -45,6 +48,11 @@ var _sel_codes = [0];
 
 
 function noteNumToCode(noteNum) {
+	// 数字でないならそのまま帰す
+	if (isNaN(noteNum)) {
+		return noteNum;
+	}
+
 	// オクターブ調整
 	var octave = Math.floor(noteNum / 12) - 2;
 	var octave_str = "";
@@ -79,7 +87,7 @@ function render() {
 		if (!nodes) {
 			// breakがしたい
 			// 参照元:https://www.deep-rain.com/programming/javascript/778#forbreakcontinuereturnforEach
-			return true;	
+			return true;
 		}
 
 		//XXX なぜ逆順？
@@ -97,11 +105,11 @@ function render() {
 			//console.log(nodes);
 
 			// ト音に音符を表示
-			if ( node >= 0x35 ) {
+			if ( _sel_lange == 1 ) {
 				g_clef_note += code;
 			}
 			// ヘ音に音符を表示
-			if ( node <= 0x43 ) {
+			if ( _sel_lange == 2 ) {
 				f_clef_note += code;
 			}
 
@@ -113,29 +121,42 @@ function render() {
 		f_clef += "]";
 	});
 
-	console.log(_ques)
+	//console.log(_ques)
 
 	g_clef = head + attrs[2][0] + g_clef + "||";
 	f_clef = head + attrs[3][0] + f_clef + "||";
 
-	console.log(g_clef)
+	// かかった時間を音符の下にくっつける
+	if (_game_state == GAME_STATE.STAND_BY && _take_times.length != 0) {
+		take_times_str = "\nw:"
+		for (let i = 0; i < DISPLAY_NOTES; i++) {
+			take_times_str += Math.round(_take_times[i].time / 100) / 10 + " ";
+		}
+
+		g_clef += take_times_str
+		f_clef += take_times_str
+	}
+
+	//console.log(g_clef)
 
 	//str = head + attrs[i*2][0] + str;
 	//str2 = head + attrs[i*2+1][0] + str2;
 
 	//TODO いらない記号を表示しない
-	console.log(_sel_lange);
+	//console.log(_sel_lange);
 
 	// 楽譜のサイズ
-	const scale = 4;
+	const params = {
+		scale: 1.5,
+	};
 
 	switch (_sel_lange) {
 		// 暫定的にぜんぶを廃止
 		case 1:
-			ABCJS.renderAbc(attrs[2][1], g_clef, {scale: scale});
+			ABCJS.renderAbc(attrs[2][1], g_clef, params);
 			break;
 		case 2:
-			ABCJS.renderAbc(attrs[3][1], f_clef, {scale: scale});
+			ABCJS.renderAbc(attrs[3][1], f_clef, params);
 			break;
 		default:
 			//ABCJS.renderAbc(attrs[2][1], g_clef);
@@ -147,11 +168,6 @@ function check_ans() {
 	//FIXME _quesがundefinedで満たされていく
 
 	if (_game_state == GAME_STATE.STAND_BY) {
-		return;
-	}
-
-	if (!_ques[0]) {
-		game_over();
 		return;
 	}
 
@@ -171,6 +187,35 @@ function check_ans() {
 	if ( hit == _ques[0].length || true) {
 		// ゲーム中ならスコアをプラス
 		if ( _game_state == GAME_STATE.PLAYING ) {
+			// かかった時間を集計
+			now = new Date();
+			let diff = now.getTime() - _previous_time.getTime();
+
+			code = noteNumToCode(_ques[0]);
+
+			// すでにコードが登録されているか検索
+			var res = _take_times.filter(function(item, index){
+				if (item.code == code) {
+					item.time += diff;
+					return true;
+				}
+			});
+
+			console.log(res);
+
+			// ないなら 0 で初期化
+			if (res.length == 0) {
+				memo = {};
+				memo.code = code;
+				memo.time = diff;
+
+				console.log(code + " inited");
+
+				_take_times.push(memo);
+	
+			}
+			_previous_time = now;
+
 			_score--;
 			// 効果音再生
 			_se_accept.play();
@@ -179,6 +224,11 @@ function check_ans() {
 		// 正解したので先頭の音符を取り除く
 		_ques.shift();
 		question();
+
+		if (!_ques[0]) {
+			game_over();
+			return;
+		}
 	}
 }
 
@@ -275,12 +325,25 @@ function question() {
 	// }
 }
 
+/**
+ * 参考：https://qiita.com/nagito25/items/0293bc317067d9e6c560
+ * 
+ * 任意の桁で四捨五入する関数
+ * @param {number} value 四捨五入する数値
+ * @param {number} base どの桁で四捨五入するか（10→10の位、0.1→小数第１位）
+ * @return {number} 四捨五入した値
+ */
+function orgRound(value, base) {
+    return Math.round(value * base) / base;
+}
+
 function random(min, max) {
 	return Math.floor( Math.random() * (max - min + 1) ) + min;
 }
 
 var _count_down;
 var _count_up;
+var _start_date;
 
 function game_start() {
 	if ( _game_state == GAME_STATE.STAND_BY ) {
@@ -291,16 +354,59 @@ function game_start() {
 	_ques.splice(0, _ques.length);
 	init_question_pool();
 	_score = _ques_pool.length;
+	_init_score = _score;
 
 	for (let i = 0; i < DISPLAY_NOTES; i++) {
 		question();		
 	}
 
+	// 時間計測（setIntervalは当てにならない）
+	_start_date = new Date();
+	_previous_time = new Date();
+
 	_game_state = GAME_STATE.PLAYING;
-	_time = 0;
+	_time = 0; //FIXME 0だと違和感がある
 	//count_down();
-	count_up();
+	//count_up();
 	$("#score").text("REMAIN: " + _score);
+}
+
+function diff_sec() {
+	now = new Date();
+	let diff = now.getTime() - _start_date.getTime() ;
+
+	//ミリ秒から秒に変換
+	diff /= 1000;
+
+	// 少数第二位で四捨五入
+	diff = Math.round(diff * 10) / 10
+
+	return diff
+}
+
+// https://qiita.com/n0bisuke/items/f2dd06bfb0e4daa1e0d8
+// dataは破壊的
+function object_array_sort(data,key,order){
+    //デフォは降順(DESC)
+    var num_a = -1;
+    var num_b = 1;
+
+    if(order === 'asc'){//指定があれば昇順(ASC)
+      num_a = 1;
+      num_b = -1;
+    }
+
+   data = data.sort(function(a, b){
+      var x = a[key];
+      var y = b[key];
+      if (x > y) return num_a;
+      if (x < y) return num_b;
+      return 0;
+    });
+
+	// なぜ関数をコールバックしている？
+	//fn(data); // ソート後の配列を返す
+	return data
 }
 
 function game_over() {
@@ -308,6 +414,27 @@ function game_over() {
 	//$("#time").text("FINISH!");
 	_se_finish.play();
 	console.log("tick");
+
+	clearInterval(_count_up);
+
+	// 各音符にかかった時間の集計
+	take_times = object_array_sort(_take_times, 'time', 'dsc');
+
+	const avg = orgRound(diff_sec()/_init_score, 0.01);
+	$("#time").text("TIME: " + diff_sec() + " avg:" + avg);
+
+	disp_weak();
+}
+
+function disp_weak() {
+	// 本当は良くないけど ques にぶち込んでる
+	for (let i = 0; i < DISPLAY_NOTES; i++) {
+		_ques[i] = [take_times[i].code];
+	}
+	console.log(take_times);
+	console.log(_ques);
+
+	render();
 }
 
 var count_down = function () {
