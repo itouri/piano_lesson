@@ -28,11 +28,10 @@ var _se_accept	= new Audio("./se/accept.mp3");
 
 // 音域
 var ranges = [
-	[36, 96], // すべて
-	//[60, 96], // ト音のみ
-	[36, 77], // すべて-高音域なし	
-	[36, 59], // ヘ音のみ
-	[60, 71], // 1オクターブのみ
+	//TODO 具体的な数字を使わない
+	[0x24, 0x60], // すべて
+	[0x35, 0x60], // ト音のみ
+	[0x24, 0x40], // ヘ音のみ
 ];
 
 var _sel_note=0, _sel_display_code=1, _sel_lange=0, _sel_scale=0, _sel_sharp=1;

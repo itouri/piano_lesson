@@ -45,8 +45,8 @@ function onMIDIEvent(e){
     }
 
     // 第三要素が0なら離したってこと
-    // if (e.data[2] == 0) { // Yamaha
-    if (e.data[0] == 0x80) { // Roland
+    if (e.data[2] == 0) { // Yamaha
+    //if (e.data[0] == 0x80) { // Roland
     	for (var j = _hold.length - 1; j >= 0; j--) {
     		if ( _hold[j] == e.data[1]) {
     			_hold.splice(j,1);
