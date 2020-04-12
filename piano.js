@@ -130,7 +130,7 @@ function render() {
 	if (_game_state == GAME_STATE.STAND_BY && _take_times.length != 0) {
 		take_times_str = "\nw:"
 		for (let i = 0; i < DISPLAY_NOTES; i++) {
-			take_times_str += Math.round(_take_times[i].time / 100) / 10 + " ";
+			take_times_str += Math.round(_take_times[i].time / 1000) + " ";
 		}
 
 		g_clef += take_times_str
@@ -147,7 +147,7 @@ function render() {
 
 	// 楽譜のサイズ
 	const params = {
-		scale: 1.5,
+		scale: 3,
 	};
 
 	switch (_sel_lange) {
@@ -184,7 +184,7 @@ function check_ans() {
 			}
 		}
 	}
-	if ( hit == _ques[0].length || true) {
+	if ( hit == _ques[0].length ) {
 		// ゲーム中ならスコアをプラス
 		if ( _game_state == GAME_STATE.PLAYING ) {
 			// かかった時間を集計
@@ -420,7 +420,7 @@ function game_over() {
 	// 各音符にかかった時間の集計
 	take_times = object_array_sort(_take_times, 'time', 'dsc');
 
-	const avg = orgRound(diff_sec()/_init_score, 0.01);
+	const avg = Math.round(diff_sec()/_init_score);
 	$("#time").text("TIME: " + diff_sec() + " avg:" + avg);
 
 	disp_weak();
